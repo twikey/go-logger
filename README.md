@@ -79,6 +79,31 @@ func main() {
 // Output: logger=my-logger lvl=info msg="hello world"
 ```
 
+## Pretty Formatting
+
+You can create a logger instance and specify the writer it should use for outputting the log lines.
+
+```go
+package main
+
+import (
+	"os"
+)
+
+func main() {
+	formatter := logger.NewPrettyFormatter()
+	log := logger.NewWithOptions(logger.Options{
+		Writer:    os.Stdout,
+		Formatter: formatter,
+		Name:      "my-logger",
+	})
+
+	log.Info("hello world")
+}
+
+// Output: 2024-10-16 14:18:03 INF [default] hello world!
+```
+
 ## Overwrite Default Logger
 
 You can overwrite the default logger if you prefer to use other settings

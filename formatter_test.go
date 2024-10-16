@@ -1,6 +1,8 @@
 package logger
 
 import (
+	"bytes"
+	"strings"
 	"testing"
 	"time"
 )
@@ -79,4 +81,20 @@ func BenchmarkTextFormatter(b *testing.B) {
 			formatter.Format(e)
 		}
 	})
+}
+
+func TestPrettyFormatter(t *testing.T) {
+	var buf bytes.Buffer
+
+	formatter := NewPrettyFormatter()
+	formatter.AppendSource = false
+	log := NewWithOptions(Options{Formatter: formatter, Writer: &buf})
+
+	log.Info("hello world!")
+
+	want := "\u001B[32mINF\u001B[0m \u001B[90m[\u001B[0m\u001B[37mdefault\u001B[0m\u001B[90m]\u001B[0m hello world!\n"
+	got := buf.String()
+	if !strings.HasSuffix(got, want) {
+		t.Errorf("Incorrect log suffix from output -> \nactual: %s", got)
+	}
 }

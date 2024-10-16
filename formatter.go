@@ -1,16 +1,60 @@
 package logger
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
+const (
+	// characters
+	space        = ' '
+	equal        = '='
+	quote        = '"'
+	newline      = '\n'
+	colon        = ':'
+	bracketLeft  = "["
+	bracketRight = "]"
+	reset        = "\033[0m"
+)
+
+const (
+	// colors
+	black = iota + 30
+	red
+	green
+	yellow
+	blue
+	magenta
+	cyan
+	white
+
+	grey = 90
+	bold = 1
+)
+
 var (
-	space   = ' '
-	equal   = '='
-	quote   = '"'
-	newline = '\n'
+	// prettyLevelNames are used by PrettyFormatter  for a short level name.
+	prettyLevelNames = map[Level]string{
+		LevelTrace:   "TRC",
+		LevelDebug:   "DBG",
+		LevelInfo:    "INF",
+		LevelWarning: "WRN",
+		LevelError:   "ERR",
+		LevelFatal:   "FTL",
+	}
+
+	// prettyLevelColors are used by PrettyFormatter to color log levels.
+	prettyLevelColors = map[Level]int{
+		LevelTrace:   blue,
+		LevelDebug:   0,
+		LevelInfo:    green,
+		LevelWarning: yellow,
+		LevelError:   red,
+		LevelFatal:   red,
+	}
 )
 
 // Formatter declares a formatter to use when preparing to write a log entry line.
@@ -21,11 +65,61 @@ type Formatter interface {
 // PrettyFormatter is a non-performance focused formatter that is useful during development.
 // It supports colored formatting for improved usability when testing out things locally.
 type PrettyFormatter struct {
+	TimeFormat   string
+	AppendSource bool
+}
+
+// NewPrettyFormatter  creates a new instance of the PrettyFormatter which output log lines in a pretty format.
+func NewPrettyFormatter() *PrettyFormatter {
+	return &PrettyFormatter{
+		TimeFormat: time.DateTime,
+	}
 }
 
 func (s *PrettyFormatter) Format(event *Event) {
-	//TODO implement me
-	panic("implement me")
+	s.color(event, grey, event.Time.Format(s.TimeFormat))
+	event.buf = append(event.buf, space)
+	s.color(event, prettyLevelColors[event.Level], prettyLevelNames[event.Level])
+	event.buf = append(event.buf, space)
+	s.color(event, grey, bracketLeft)
+	if event.Module == "" {
+		s.color(event, white, DefaultLoggerName)
+	} else {
+		s.color(event, white, event.Module)
+	}
+	s.color(event, grey, bracketRight)
+	event.buf = append(event.buf, space)
+
+	if event.Level < LevelInfo {
+		// put message in bold
+		s.color(event, bold, event.Message)
+	} else {
+		// normal output of message
+		event.buf = append(event.buf, event.Message...)
+	}
+
+	// append source information
+	if s.AppendSource {
+		event.buf = append(event.buf, space)
+		s.color(event, cyan, "source=")
+		event.buf = append(event.buf, event.Filename...)
+		event.buf = append(event.buf, colon)
+		event.buf = strconv.AppendInt(event.buf, int64(event.Line), 10)
+	}
+
+	event.buf = append(event.buf, newline)
+}
+
+func (s *PrettyFormatter) color(e *Event, color int, value string) {
+	if color > 0 {
+		code := fmt.Sprintf("\x1b[%dm", color)
+		e.buf = append(e.buf, code...)
+		e.buf = append(e.buf, value...)
+		e.buf = append(e.buf, reset...)
+	} else {
+		// without any color
+		e.buf = append(e.buf, value...)
+	}
 }
 
 // TextFormatter is a performance focused formatter prints out the log lines in a logfmt style.

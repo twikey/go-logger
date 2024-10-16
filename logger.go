@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
+	"runtime"
 	"time"
 )
 
@@ -149,6 +151,13 @@ func (l *Logger) log(lvl Level, message string) {
 	e.Module = l.name
 	e.Level = lvl
 	e.Message = message
+
+	if pf, ok := l.formatter.(*PrettyFormatter); ok && pf.AppendSource {
+		// append caller information for pretty formatter
+		_, filename, line, _ := runtime.Caller(2)
+		e.Filename = path.Base(filename)
+		e.Line = line
+	}
 
 	// format using logger formatter -> this will update internal buffer of event
 	l.formatter.Format(e)
