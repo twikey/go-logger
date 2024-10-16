@@ -1,146 +1,145 @@
-
 # go-logger
 
-[![Build Status](https://travis-ci.org/apsdehal/go-logger.svg?branch=master)](https://travis-ci.org/apsdehal/go-logger)
-[![GoDoc](https://godoc.org/github.com/apsdehal/go-logger?status.svg)](http://godoc.org/github.com/apsdehal/go-logger)
+A simple logger with support for leveled logging.
 
-A simple go logger for easy logging in your programs. Allows setting custom format for messages.
+# Installation
 
-# Preview
+```bash
+go get -u github.com/jorenkoyen/go-logger
+```
 
-[![Example Output](examples/example.png)](examples/example.go)
+# Getting Started
 
+## Simple Logging Example
 
-# Install
-
-`go get github.com/apsdehal/go-logger`
-
-Use `go get -u` to update the package.
-
-# Example
-
-Example [program](examples/example.go) demonstrates how to use the logger. See below for __formatting__ instructions.
-
+For simple logging you can import the global logger from `github.com/jorenkoyen/go-logger/log`
 
 ```go
 package main
 
 import (
-	"github.com/apsdehal/go-logger"
-	"os"
+	"github.com/jorenkoyen/go-logger/log"
 )
 
-func main () {
-	// Get the instance for logger class, "test" is the module name, 1 is used to
-	// state if we want coloring
-	// Third option is optional and is instance of type io.Writer, defaults to os.Stderr
-	log, err := logger.New("test", 1, os.Stdout)
-	if err != nil {
-		panic(err) // Check for error
-	}
-
-	// Critically log critical
-	log.Critical("This is Critical!")
-	log.CriticalF("%+v", err)
-	// You can also use fmt compliant naming scheme such as log.Criticalf, log.Panicf etc
-	// with small 'f'
-	
-	// Debug
-	// Since default logging level is Info this won't print anything
-	log.Debug("This is Debug!")
-	log.DebugF("Here are some numbers: %d %d %f", 10, -3, 3.14)
-	// Give the Warning
-	log.Warning("This is Warning!")
-	log.WarningF("This is Warning!")
-	// Show the error
-	log.Error("This is Error!")
-	log.ErrorF("This is Error!")
-	// Notice
-	log.Notice("This is Notice!")
-	log.NoticeF("%s %s", "This", "is Notice!")
-	// Show the info
-	log.Info("This is Info!")
-	log.InfoF("This is %s!", "Info")
-
-	log.StackAsError("Message before printing stack");
-
-	// Show warning with format
-	log.SetFormat("[%{module}] [%{level}] %{message}")
-	log.Warning("This is Warning!") // output: "[test] [WARNING] This is Warning!"
-	// Also you can set your format as default format for all new loggers
-	logger.SetDefaultFormat("%{message}")
-	log2, _ := logger.New("pkg", 1, os.Stdout)
-	log2.Error("This is Error!") // output: "This is Error!"
-
-	// Use log levels to set your log priority
-	log2.SetLogLevel(DebugLevel)
-	// This will be printed
-	log2.Debug("This is debug!")
-	log2.SetLogLevel(WarningLevel)
-	// This won't be printed
-	log2.Info("This is an error!")
+func main() {
+	log.Info("hello world")
 }
+
+// Output: ts=1729066152742 lvl=info msg="hello world"
 ```
 
+## Bring Your Own Writer
 
-# Formatting
+You can create a logger instance and specify the writer it should use for outputting the log lines.
 
-By default all log messages have format that you can see above (on pic).
-But you can override the default format and set format that you want.
-
-You can do it for Logger instance (after creating logger) ...
 ```go
-log, _ := logger.New("pkgname", 1)
-log.SetFormat(format)
+package main
+
+import (
+	"os"
+
+	"github.com/jorenkoyen/go-logger"
+)
+
+func main() {
+	log := logger.New(os.Stdout)
+	log.Info("hello world")
+}
+
+// Output: ts=1729066279358 logger=default lvl=info msg="hello world"
 ```
-... or for package
+
+## Customize Your Logger
+
+Create a fully customized logger with all your preferred options and a custom Formatter.
+
 ```go
-logger.SetDefaultFormat(format)
-```
-If you do it for package, all existing loggers will print log messages with format that these used already.
-But all newest loggers (which will be created after changing format for package) will use your specified format.
+package main
 
-But anyway after this, you can still set format of message for specific Logger instance.
+import (
+	"os"
 
-Format of log message must contains verbs that represent some info about current log entry.
-Ofc, format can contain not only verbs but also something else (for example text, digits, symbols, etc)
+	"github.com/jorenkoyen/go-logger"
+)
 
-### Format verbs:
-You can use the following verbs:
+func main() {
+	formatter := logger.NewTextFormatter()
+	formatter.TimestampField = "" // disables timestamp printing
+	
+	log := logger.NewWithOptions(logger.Options{
+		Name:      "my-logger",
+		Writer:    os.Stdout,
+		Level:     logger.LevelTrace, // explicit logger level overwrites logger.GlobalLevel
+		Formatter: formatter,
+    })
+	
+	
+	log.Info("hello world")
+}
+
+// Output: logger=my-logger lvl=info msg="hello world"
 ```
-%{id}           - means number of current log message
-%{module}       - means module name (that you passed to func New())
-%{time}			- means current time in format "2006-01-02 15:04:05"
-%{time:format}	- means current time in format that you want
-					(supports all formats supported by go package "time")
-%{level}		- means level name (upper case) of log message ("ERROR", "DEBUG", etc)
-%{lvl}			- means first 3 letters of level name (upper case) of log message ("ERR", "DEB", etc)
-%{file} 		- means name of file in what you wanna write log
-%{filename}		- means the same as %{file}
-%{line}			- means line number of file in what you wanna write log
-%{message}		- means your log message
+
+## Overwrite Default Logger
+
+You can overwrite the default logger if you prefer to use other settings
+
+```go
+package main
+
+import (
+	"os"
+
+	"github.com/jorenkoyen/go-logger"
+	"github.com/jorenkoyen/go-logger/log"
+)
+
+func main() {
+	formatter := logger.NewTextFormatter()
+	formatter.LevelField = "l"
+	formatter.TimestampField = "t"
+	formatter.NameField = "n"
+	
+	log.Logger = logger.NewWithOptions(logger.Options{
+		Name:      "default-logger",
+		Writer:    os.Stdout,
+		Level:     logger.LevelTrace, // explicit logger level overwrites logger.GlobalLevel
+		Formatter: formatter,
+    })
+	
+	// assign to default logger
+	log.Info("hello world")
+	
+	// clone logger with new name
+	cloned := log.WithName("clone")
+    cloned.Debug("hello from clone")
+}
+
+// Output: 
+// t=1729067411654 n=default-logger l=info msg="hello world"
+// t=1729067411654 n=clone l=debyg msg="hello from clone"
 ```
-Non-existent verbs (like ```%{nonex-verb}``` or ```%{}```) will be replaced by an empty string.
-Invalid verbs (like ```%{inv-verb```) will be treated as plain text.
 
 # Tests
 
 Run:
-- `go test logger` to run test on logger.
-- `go test -bench=.` for benchmarks.
 
-## Thanks
+- `make test` to run all test.
+- `make cov` to run coverage tests.
+- `make bench` to run benchmark tests.
 
-Thanks goes to all go-loggers out there which I used as reference.
+# Benchmark Results
 
-## Contributors
-
-Following contributors have made major contributions to go-logger:
-
-- [@qioalice](https://github.com/qioalice)
-- [@gjvnq](https://github.com/gjvnq)
-- [@maezen](https://github.com/maezen)
+```bash
+BenchmarkLogEmpty-8             53943338                22.97  ns/op          0   B/op          0 allocs/op
+BenchmarkDisabled-8             1000000000              0.3272 ns/op          0   B/op          0 allocs/op
+BenchmarkInfo-8                 47163553                24.77  ns/op          0   B/op          0 allocs/op
+BenchmarkFormatted-8            18861511                68.44  ns/op          48  B/op          1 allocs/op
+BenchmarkLoggerNew-8            1000000000              0.3190 ns/op          0   B/op          0 allocs/op
+BenchmarkTextFormatter-8        53173220                21.42  ns/op          282 B/op          0 allocs/op
+```
 
 ## License
 
-The [BSD 3-Clause license](http://opensource.org/licenses/BSD-3-Clause), the same as the [Go language](http://golang.org/LICENSE).
+The [BSD 3-Clause license](http://opensource.org/licenses/BSD-3-Clause), the same as
+the [Go language](http://golang.org/LICENSE).
