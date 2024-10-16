@@ -143,7 +143,7 @@ func main() {
 
 // Output: 
 // t=1729067411654 n=default-logger l=info msg="hello world"
-// t=1729067411654 n=clone l=debyg msg="hello from clone"
+// t=1729067411654 n=clone l=debug msg="hello from clone"
 ```
 
 # Tests
