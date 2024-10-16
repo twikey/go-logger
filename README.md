@@ -126,13 +126,13 @@ func main() {
 	formatter.TimestampField = "t"
 	formatter.NameField = "n"
 
-	log.Logger = logger.NewWithOptions(logger.Options{
+	log.SetDefaultLogger(logger.NewWithOptions(logger.Options{
 		Name:      "default-logger",
 		Writer:    os.Stdout,
 		Level:     logger.LevelTrace, // explicit logger level overwrites logger.GlobalLevel
 		Formatter: formatter,
-	})
-
+	}))
+	
 	// assign to default logger
 	log.Info("hello world")
 
