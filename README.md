@@ -81,7 +81,7 @@ func main() {
 
 ## Pretty Formatting
 
-You can create a logger instance and specify the writer it should use for outputting the log lines.
+You can make use of pretty formatting in environments where optimisation is not crucial such as during development.
 
 ```go
 package main
