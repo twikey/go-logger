@@ -65,15 +65,14 @@ import (
 func main() {
 	formatter := logger.NewTextFormatter()
 	formatter.TimestampField = "" // disables timestamp printing
-	
+
 	log := logger.NewWithOptions(logger.Options{
 		Name:      "my-logger",
 		Writer:    os.Stdout,
 		Level:     logger.LevelTrace, // explicit logger level overwrites logger.GlobalLevel
 		Formatter: formatter,
-    })
-	
-	
+	})
+
 	log.Info("hello world")
 }
 
@@ -99,20 +98,20 @@ func main() {
 	formatter.LevelField = "l"
 	formatter.TimestampField = "t"
 	formatter.NameField = "n"
-	
+
 	log.Logger = logger.NewWithOptions(logger.Options{
 		Name:      "default-logger",
 		Writer:    os.Stdout,
 		Level:     logger.LevelTrace, // explicit logger level overwrites logger.GlobalLevel
 		Formatter: formatter,
-    })
-	
+	})
+
 	// assign to default logger
 	log.Info("hello world")
-	
+
 	// clone logger with new name
 	cloned := log.WithName("clone")
-    cloned.Debug("hello from clone")
+	cloned.Debug("hello from clone")
 }
 
 // Output: 
