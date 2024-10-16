@@ -68,6 +68,7 @@ type Logger struct {
 	name      string
 	level     Level
 	w         io.Writer
+	Pos       int
 
 	// only used for testing ...
 	ignoreExit bool
@@ -115,6 +116,7 @@ func NewWithOptions(opts Options) *Logger {
 		formatter: opts.Formatter,
 		name:      opts.Name,
 		level:     opts.Level,
+		Pos:       2,
 	}
 }
 
@@ -154,7 +156,7 @@ func (l *Logger) log(lvl Level, message string) {
 
 	if pf, ok := l.formatter.(*PrettyFormatter); ok && pf.AppendSource {
 		// append caller information for pretty formatter
-		_, filename, line, _ := runtime.Caller(2)
+		_, filename, line, _ := runtime.Caller(l.Pos)
 		e.Filename = path.Base(filename)
 		e.Line = line
 	}

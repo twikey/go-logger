@@ -6,80 +6,86 @@ import (
 	"github.com/jorenkoyen/go-logger"
 )
 
-// Logger is the global default logger when no logger instance was defined.
-var Logger = logger.NewWithOptions(logger.Options{Name: "", Writer: os.Stderr})
+// log is the global default logger when no logger instance was defined.
+var log = logger.NewWithOptions(logger.Options{Name: "", Writer: os.Stderr})
+
+// SetDefaultLogger will override the default logger for the log package.
+func SetDefaultLogger(l *logger.Logger) {
+	l.Pos = 3 // we are nested one level deeper in this package
+	log = l
+}
 
 // WithName clones the default logger but changes the name of the logger.
 func WithName(name string) *logger.Logger {
-	return Logger.WithName(name)
+	return log.WithName(name)
 }
 
 // Panic is just like Fatal except that it is followed by a call to panic.
 func Panic(message string) {
-	Logger.Panic(message)
+	log.Panic(message)
 }
 
 // Panicf is just like Fatalf except that it is followed by a call to panic.
 func Panicf(format string, a ...interface{}) {
-	Logger.Panicf(format, a...)
+	log.Panicf(format, a...)
 }
 
 // Fatal logs a message at a Fatal Level.
 func Fatal(message string) {
-	Logger.Fatal(message)
+	log.Fatal(message)
 }
 
 // Fatalf logs a message at Fatal level.
 func Fatalf(format string, a ...interface{}) {
-	Logger.Fatalf(format, a...)
+	log.Fatalf(format, a...)
 }
 
 // Error logs a message at Error level.
 func Error(message string) {
-	Logger.Error(message)
+	log.Error(message)
 }
 
 // Errorf logs a message at Error level.
 func Errorf(format string, a ...interface{}) {
-	Logger.Errorf(format, a...)
+	log.Errorf(format, a...)
 }
 
 // Warning logs a message at Warning level
 func Warning(message string) {
-	Logger.Warning(message)
+	log.Warning(message)
 }
 
 // Warningf logs a message at Warning level.
 func Warningf(format string, a ...interface{}) {
-	Logger.Warningf(format, a...)
+	log.Warningf(format, a...)
 }
 
 // Info logs a message at Info level.
 func Info(message string) {
-	Logger.Info(message)
+	log.Info(message)
 }
 
 // Infof logs a message at Info level.
 func Infof(format string, a ...interface{}) {
-	Logger.Infof(format, a...)
+	log.Infof(format, a...)
 }
 
 // Debug logs a message at Debug level.
 func Debug(message string) {
-	Logger.Debug(message)
+	log.Debug(message)
 }
 
 // Debugf logs a message at Debug level.
 func Debugf(format string, a ...interface{}) {
-	Logger.Debugf(format, a...)
+	log.Debugf(format, a...)
 }
 
 // Trace logs a message at Debug level.
 func Trace(message string) {
-	Logger.Trace(message)
+	log.Trace(message)
 }
 
 // Tracef logs a message at Debug level.
 func Tracef(format string, a ...interface{}) {
-	Logger.Tracef(format, a...)
+	log.Tracef(format, a...)
 }

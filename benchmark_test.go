@@ -54,6 +54,29 @@ func BenchmarkFormatted(b *testing.B) {
 	})
 }
 
+func BenchmarkPrettyFormatter(b *testing.B) {
+	formatter := NewPrettyFormatter()
+	logger := NewWithOptions(Options{Writer: io.Discard, Formatter: formatter})
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			logger.Info("Hello world!")
+		}
+	})
+}
+
+func BenchmarkPrettyFormatterWithCallerSource(b *testing.B) {
+	formatter := NewPrettyFormatter()
+	formatter.AppendSource = true
+	logger := NewWithOptions(Options{Writer: io.Discard, Formatter: formatter})
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			logger.Info("Hello world!")
+		}
+	})
+}
+
 func BenchmarkLoggerNew(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
