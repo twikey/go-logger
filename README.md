@@ -88,6 +88,8 @@ package main
 
 import (
 	"os"
+
+	"github.com/jorenkoyen/go-logger"
 )
 
 func main() {
