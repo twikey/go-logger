@@ -1,5 +1,7 @@
 # go-logger
 
+[![Go Reference](https://pkg.go.dev/badge/go.pkg.dev/github.com/jorenkoyen/go-logger.svg)](https://pkg.go.dev/go.pkg.dev/github.com/jorenkoyen/go-logger)
+
 A simple logger with support for leveled logging.
 
 # Installation
