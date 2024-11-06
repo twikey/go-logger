@@ -7,6 +7,23 @@ import (
 	"testing"
 )
 
+func TestParseLevel(t *testing.T) {
+	equals := func(expected, actual interface{}) {
+		t.Helper()
+		if expected != actual {
+			t.Errorf("expected: %s, got: %s", expected, actual)
+		}
+	}
+
+	equals(LevelFatal, ParseLevel("fatal"))
+	equals(LevelError, ParseLevel("error"))
+	equals(LevelWarning, ParseLevel("warn"))
+	equals(LevelInfo, ParseLevel("info"))
+	equals(LevelDebug, ParseLevel("debug"))
+	equals(LevelTrace, ParseLevel("trace"))
+	equals(Level(0), ParseLevel("invalid")) // empty log level
+}
+
 func TestLoggerNew(t *testing.T) {
 	log := New(io.Discard)
 	if log == nil {

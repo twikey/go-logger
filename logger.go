@@ -62,6 +62,27 @@ func (lvl Level) String() string {
 	}
 }
 
+// ParseLevel will transform the string based notation of the level into an actual log level.
+// If unable to match the correct level value it will return a non existing level that will result in no log lines.
+func ParseLevel(lvl string) Level {
+	switch lvl {
+	case LevelFatalValue:
+		return LevelFatal
+	case LevelErrorValue:
+		return LevelError
+	case LevelWarningValue:
+		return LevelWarning
+	case LevelInfoValue:
+		return LevelInfo
+	case LevelDebugValue:
+		return LevelDebug
+	case LevelTraceValue:
+		return LevelTrace
+	default:
+		return 0
+	}
+}
+
 // Logger defines the structure that is able to transmit a log line to the writer.
 type Logger struct {
 	formatter Formatter
