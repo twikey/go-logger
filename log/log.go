@@ -1,9 +1,8 @@
 package log
 
 import (
+	"github.com/twikey/go-logger"
 	"os"
-
-	"github.com/jorenkoyen/go-logger"
 )
 
 // log is the global default logger when no logger instance was defined.

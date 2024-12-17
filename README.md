@@ -1,26 +1,26 @@
 # go-logger
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/jorenkoyen/go-logger.svg)](https://pkg.go.dev/github.com/jorenkoyen/go-logger)
+[![Go Reference](https://pkg.go.dev/badge/github.com/twikey/go-logger.svg)](https://pkg.go.dev/github.com/twikey/go-logger)
 
 A simple logger with support for leveled logging.
 
 # Installation
 
 ```bash
-go get -u github.com/jorenkoyen/go-logger
+go get -u github.com/twikey/go-logger
 ```
 
 # Getting Started
 
 ## Simple Logging Example
 
-For simple logging you can import the global logger from `github.com/jorenkoyen/go-logger/log`
+For simple logging you can import the global logger from `github.com/twikey/go-logger/log`
 
 ```go
 package main
 
 import (
-	"github.com/jorenkoyen/go-logger/log"
+	"github.com/twikey/go-logger/log"
 )
 
 func main() {
@@ -40,7 +40,7 @@ package main
 import (
 	"os"
 
-	"github.com/jorenkoyen/go-logger"
+	"github.com/twikey/go-logger"
 )
 
 func main() {
@@ -61,7 +61,7 @@ package main
 import (
 	"os"
 
-	"github.com/jorenkoyen/go-logger"
+	"github.com/twikey/go-logger"
 )
 
 func main() {
@@ -91,7 +91,7 @@ package main
 import (
 	"os"
 
-	"github.com/jorenkoyen/go-logger"
+	"github.com/twikey/go-logger"
 )
 
 func main() {
@@ -118,8 +118,8 @@ package main
 import (
 	"os"
 
-	"github.com/jorenkoyen/go-logger"
-	"github.com/jorenkoyen/go-logger/log"
+	"github.com/twikey/go-logger"
+	"github.com/twikey/go-logger/log"
 )
 
 func main() {
