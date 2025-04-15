@@ -9,6 +9,12 @@ import (
 // log is the global default logger when no logger instance was defined.
 var log = logger.NewWithOptions(logger.Options{Name: "", Writer: os.Stderr})
 
+// CreateDefaultLogger creates a new default logger based on the specified options.
+func CreateDefaultLogger(options logger.Options) {
+	_logger := logger.NewWithOptions(options)
+	SetDefaultLogger(_logger)
+}
+
 // SetDefaultLogger will override the default logger for the log package.
 func SetDefaultLogger(l *logger.Logger) {
 	l.Pos = 3 // we are nested one level deeper in this package
