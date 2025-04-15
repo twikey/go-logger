@@ -17,6 +17,7 @@ const (
 	colon        = ':'
 	bracketLeft  = "["
 	bracketRight = "]"
+	hyphen       = "-"
 	reset        = "\033[0m"
 )
 
@@ -202,4 +203,31 @@ func (t *TextFormatter) valueInt64(e *Event, value int64) {
 
 func (t *TextFormatter) needsQuotedValueRune(r rune) bool {
 	return r <= ' ' || r == '=' || r == '"' || r == utf8.RuneError
+}
+
+// JournalFormatter is a formatter which prints log lines in the following output:
+//
+// [module] level - message
+type JournalFormatter struct {
+}
+
+// NewJournalFormatter creates a new formatter which outputs log lines in a journalctl friendly format.
+func NewJournalFormatter() *JournalFormatter {
+	return &JournalFormatter{}
+}
+
+func (j *JournalFormatter) Format(e *Event) {
+	if e.Module != "" {
+		e.buf = append(e.buf, bracketLeft...)
+		e.buf = append(e.buf, e.Module...)
+		e.buf = append(e.buf, bracketRight...)
+		e.buf = append(e.buf, space)
+	}
+
+	e.buf = append(e.buf, e.Level.String()...)
+	e.buf = append(e.buf, space)
+	e.buf = append(e.buf, hyphen...)
+	e.buf = append(e.buf, space)
+	e.buf = append(e.buf, e.Message...)
+	e.buf = append(e.buf, newline)
 }
