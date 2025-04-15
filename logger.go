@@ -146,6 +146,11 @@ func (l *Logger) SetLogLevel(lvl Level) {
 	l.level = lvl
 }
 
+// SetFormatter will assign a new formatter for the logger instance.
+func (l *Logger) SetFormatter(formatter Formatter) {
+	l.formatter = formatter
+}
+
 // should returns true if the log event should be logged.
 func (l *Logger) should(lvl Level) bool {
 	if l.w == nil {
