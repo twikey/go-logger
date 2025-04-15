@@ -7,6 +7,35 @@ import (
 	"time"
 )
 
+func TestJournalFormatter_noModule(t *testing.T) {
+	formatter := NewJournalFormatter()
+	e := &Event{
+		Level:   LevelInfo,
+		Message: "Hello World",
+	}
+
+	want := "info - Hello World\n"
+	formatter.Format(e)
+	if want != string(e.buf) {
+		t.Errorf("\nWant: %s\nGot: %s", want, string(e.buf))
+	}
+}
+
+func TestJournalFormatter_simple(t *testing.T) {
+	formatter := NewJournalFormatter()
+	e := &Event{
+		Level:   LevelInfo,
+		Module:  "main",
+		Message: "Hello World",
+	}
+
+	want := "[main] info - Hello World\n"
+	formatter.Format(e)
+	if want != string(e.buf) {
+		t.Errorf("\nWant: %s\nGot: %s", want, string(e.buf))
+	}
+}
+
 func TestTextFormatter_simple(t *testing.T) {
 	formatter := NewTextFormatter()
 	e := &Event{
@@ -75,6 +104,25 @@ func BenchmarkTextFormatter(b *testing.B) {
 			Line:     100,
 			Filename: "example.go",
 			Message:  "Hello world!",
+		}
+
+		for pb.Next() {
+			formatter.Format(e)
+		}
+	})
+}
+
+func BenchmarkJournalFormatter(b *testing.B) {
+	formatter := NewJournalFormatter()
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		e := &Event{
+			buf:     make([]byte, 0, 500),
+			Time:    time.Unix(1, 0),
+			Module:  "main",
+			Level:   LevelInfo,
+			Message: "Hello world!",
 		}
 
 		for pb.Next() {
